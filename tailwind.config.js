@@ -6,6 +6,11 @@ export default {
   ],
   theme: {
     extend: {},
+    colors: {
+      MyColor:{
+        Main:'#5DAC81'
+      }
+    }
   },
   plugins: [],
 }

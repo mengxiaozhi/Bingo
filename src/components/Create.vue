@@ -1,6 +1,6 @@
 <template>
   <n-h1>
-    <n-text type="primary">
+    <n-text type="primary" class="text-MyColor-Main">
       宾果游戏生成器
     </n-text>
   </n-h1>
@@ -15,7 +15,7 @@
       <n-input-number id="rows" v-model:value="columns" size="large" min="2" />
     </div>
     <button @click="saveAsImage" ref="saveButton">
-      <n-button type="primary">
+      <n-button type="primary" class="bg-MyColor-Main">
         保存图片
       </n-button>
     </button>
@@ -24,17 +24,17 @@
   <main ref="bingoTable" class="pt-6 pb-6">
     <n-h1 prefix="bar">
       <n-text type="primary">
-        <textarea maxlength="20" placeholder="标题" />
+        <input class="text-MyColor-Main" maxlength="20" placeholder="标题" style="font-size: 25px"></input>
       </n-text>
     </n-h1>
     <n-p>
-      <textarea maxlength="50" placeholder="说明" class="text-black" style="font-size: 0.875rem" />
+      <textarea maxlength="50" placeholder="说明" class="text-black" style="font-size: 17px" />
     </n-p>
     <n-table :bordered="true" :single-line="false" striped>
       <tbody>
         <tr v-for="row in rows" :key="row">
           <td v-for="col in columns" :key="col">
-            <textarea maxlength="20" placeholder="輸入內容" class="text-black" />
+            <textarea maxlength="25" placeholder="輸入內容" class="text-black" />
           </td>
         </tr>
       </tbody>
@@ -42,7 +42,7 @@
     <br>
     <div>
       <p>
-        宾果游戏生成器<br>Copyright© <a href="https://xiaozhi.moe" class="text-emerald-600">萌小志Mengxiaozhi</a>
+        宾果游戏生成器<br>Copyright© <a href="https://xiaozhi.moe" class="text-MyColor-Main">萌小志Mengxiaozhi</a>
       </p>
     </div>
   </main>
@@ -110,6 +110,7 @@
     height: 100%;
     width: 100%;
     border: 0;
+    outline-color: #5DAC81;
   }
 
   textarea {
@@ -118,18 +119,12 @@
     width: 100%;
     border: 0;
     resize: none;
-    font-size: 23px;
+    font-size: 25px;
     outline-color: #5DAC81;
   }
 
   td {
     height: 72px;
     width: 72px;
-  }
-
-  @media (max-width: 650px) {
-    textarea {
-      font-size: 13px;
-    }
   }
 </style>
