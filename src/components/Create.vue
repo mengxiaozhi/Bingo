@@ -1,9 +1,16 @@
 <template>
-  <n-h1>
+  <n-image
+    width="257"
+    src="site_logo.png"
+  />
+  <n-h1 class="mt-0">
     <n-text type="primary" class="text-MyColor-Main">
-      宾果游戏生成器
+      宾果游戏生成器 for 萌小志Mengxiaozhi
     </n-text>
   </n-h1>
+  <n-blockquote>
+    每个栏位最高支持11个资源，栏位无上限（如果你的电脑扛得住的话），下限为2*2。
+  </n-blockquote>
   <br>
   <div class="flex justify-start">
     <div class="flex items-center mr-8">
@@ -34,7 +41,7 @@
       <tbody>
         <tr v-for="row in rows" :key="row">
           <td v-for="col in columns" :key="col">
-            <textarea maxlength="25" placeholder="輸入內容" class="text-black" />
+            <textarea maxlength="11" placeholder="輸入內容" class="text-black text-center" />
           </td>
         </tr>
       </tbody>
@@ -56,8 +63,8 @@
     setup() {
       const gameName = ref('');
       const content = ref('');
-      const rows = ref(3);
-      const columns = ref(3);
+      const rows = ref(5);
+      const columns = ref(5);
       const bingoTable = ref(null); // 定义 ref 对象
 
       const saveAsImage = async () => {
@@ -115,12 +122,12 @@
 
   textarea {
     background-color: rgba(240, 248, 255, 0);
-    height: 100%;
-    width: 100%;
     border: 0;
     resize: none;
     font-size: 25px;
     outline-color: #5DAC81;
+    height:50%;
+    width: 100%;
   }
 
   td {
