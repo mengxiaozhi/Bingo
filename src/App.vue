@@ -22,7 +22,9 @@ section {
   display: flex; /* 使用 Flexbox */
   justify-content: center; /* 水平居中 */
   padding-top: 32px;
-  max-width: 1500px; /* 设置最大宽度 */
+  padding-left: 10px;
+  padding-right: 10px;
+  max-width: 1520px; /* 设置最大宽度 */
   margin: 0 auto; /* 确保 section 本身在视口中居中 */
 }
 
