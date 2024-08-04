@@ -28,6 +28,11 @@ section {
   margin: 0 auto; /* 确保 section 本身在视口中居中 */
 }
 
+::selection {
+  background-color: #5DAC81; /* 背景色 */
+  color: white; /* 文字颜色 */
+}
+
 .warp {
   width: 100%; /* 让 warp 占满父容器的宽度 */
   max-width: 100%; /* 让 warp 的宽度最多为 100% */

@@ -12,7 +12,7 @@
     </n-text>
   </n-h1>
   <n-blockquote>
-    标题最高支持50字元，说明最高支持85字元，每个栏位最高支持11个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
+    标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
     虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
     本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
   </n-blockquote>
@@ -29,31 +29,27 @@
       </div>
     </div>
     <div class="mb-3">
-      <button @click="saveAsImage" ref="saveButton">
-        <n-button type="primary" class="bg-MyColor-Main" size="large">
-          <n-icon size="23">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <path
-                d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z" />
-            </svg>
-          </n-icon>
-          生成图片
-        </n-button>
-      </button>
-      <button @click="exportAsCSV" ref="saveButton" class="ml-3">
-        <n-button type="primary" ghost class="text-MyColor-Main" size="large">
-          <n-icon size="23">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
-              <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8 9l3 3l-3 3"></path>
-                <path d="M13 15h3"></path>
-                <rect x="4" y="4" width="16" height="16" rx="4"></rect>
-              </g>
-            </svg>
-          </n-icon>
-          导出CSV
-        </n-button>
-      </button>
+      <n-button @click="saveAsImage" ref="saveButton" type="primary" class="bg-MyColor-Main" size="large">
+        <n-icon size="23">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path
+              d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z" />
+          </svg>
+        </n-icon>
+        生成图片
+      </n-button>
+      <n-button @click="exportAsCSV" ref="saveButton" type="primary" ghost class="text-MyColor-Main ml-3" size="large">
+        <n-icon size="23">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
+            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 9l3 3l-3 3"></path>
+              <path d="M13 15h3"></path>
+              <rect x="4" y="4" width="16" height="16" rx="4"></rect>
+            </g>
+          </svg>
+        </n-icon>
+        导出CSV
+      </n-button>
     </div>
   </div>
   <n-divider />
@@ -69,8 +65,9 @@
     <n-table :bordered="true" :single-line="false" striped>
       <tbody id="table">
         <tr v-for="row in rows" :key="row">
-          <td v-for="col in columns" :key="col">
-            <textarea maxlength="11" class="text-black text-center" />
+          <td v-for="col in columns" :key="col" style="padding: 0px;">
+            <!--<textarea maxlength="8" class="text-black text-center" />-->
+            <input maxlength="8" class="text-black text-center" type="text">
           </td>
         </tr>
       </tbody>
@@ -87,8 +84,19 @@
 <script>
   import { nextTick, ref } from 'vue';
   import html2canvas from 'html2canvas';
+  import { NButton, NInputNumber, NIcon, NDivider, NTable, NImage, NText, NBlockquote } from 'naive-ui';
 
   export default {
+    components: {
+      NButton,
+      NInputNumber,
+      NIcon,
+      NDivider,
+      NTable,
+      NImage,
+      NText,
+      NBlockquote,
+    },
     setup() {
       const gameName = ref('');
       const content = ref('');
@@ -106,17 +114,24 @@
           clonedTable.style.position = 'absolute'; // 确保不会影响页面布局
           clonedTable.style.top = '0';
           clonedTable.style.left = '0';
-          clonedTable.style.width = '1500px'; // 确保宽度为固定值
+
+          // 计算新的宽度
+          const cellSize = 72; // 每个单元格的宽度和高度
+          const borderSize = 1.7; // 边框的宽度
+          const extraWidth = 147.41; // 每增加一栏增加的宽度
+          const newWidth = 760 + (columns.value - 5) * extraWidth; // 基础宽度 + 增加的宽度
+          clonedTable.style.width = `${newWidth}px`; // 设置新的宽度
+
           document.body.appendChild(clonedTable);
 
           // 设置固定字体大小
           const style = document.createElement('style');
           style.textContent = `
-          #table textarea {
-            font-size: 25px !important;
-            height: 50% !important;
-          }
-        `;
+            #table input {
+              font-size: 17px !important;
+              height: 50% !important;
+            }
+          `;
           clonedTable.appendChild(style);
 
           // 获取元素尺寸
@@ -126,7 +141,7 @@
           html2canvas(clonedTable, {
             useCORS: true, // 启用跨域
             scale: 1, // 不放大画布，使用实际尺寸
-            width: 1500, // 设置画布宽度
+            width: newWidth, // 设置画布宽度
             backgroundColor: '#ffffff' // 设置背景颜色为白色
           }).then(canvas => {
             const link = document.createElement('a');
@@ -198,17 +213,27 @@
     width: 100%;
   }
 
-  #table textarea {
+  /* #table textarea {
     background-color: rgba(240, 248, 255, 0);
     border: 0;
     resize: none;
-    font-size: 25px;
+    font-size: 1em;
     outline-color: #5DAC81;
     height: 50%;
     width: 100%;
   }
 
   #table textarea:focus {
+    height: 100%;
+    width: 100%;
+  }*/
+
+  #table input {
+    background-color: rgba(240, 248, 255, 0);
+    border: 0;
+    resize: none;
+    font-size: 25px;
+    outline-color: #5DAC81;
     height: 100%;
     width: 100%;
   }
@@ -219,7 +244,11 @@
   }
 
   @media (max-width: 768px) {
-    textarea {
+
+    /*#table textarea {
+      font-size: 13px;
+    }*/
+    #table input {
       font-size: 13px;
     }
   }
