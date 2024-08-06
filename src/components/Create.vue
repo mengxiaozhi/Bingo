@@ -1,4 +1,4 @@
-<template>
+<template ref="scrollContainer" class="scroll-container">
   <div class="flex justify-between">
     <n-image width="257" src="site_logo.png" alt="Website_Logo" />
     <n-button strong secondary size="large" class="mt-3 p-6">
@@ -6,85 +6,174 @@
     </n-button>
   </div>
   <br>
-  <n-h1 class="mt-0">
-    <n-text type="primary" class="text-MyColor-Main">
-      宾果游戏生成器 for 萌小志Mengxiaozhi
-    </n-text>
-  </n-h1>
-  <n-blockquote>
-    标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
-    虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
-    本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
-  </n-blockquote>
-  <br>
-  <div class="flex flex-wrap">
-    <div class="flex justify-start mb-3">
-      <div class="flex items-center mr-8">
-        <label for="rows" class="mr-2">行:</label>
-        <n-input-number id="rows" v-model:value="rows" size="large" min="2" />
-      </div>
-      <div class="flex items-center mr-8">
-        <label for="columns" class="mr-2">列:</label>
-        <n-input-number id="rows" v-model:value="columns" size="large" min="2" />
+  <div class="flex justify-between flex-col lg:flex-row gap-4 warp">
+    <div v-if="isWideScreen === true" style="width: 570px;">
+      <n-h1 class="mt-0">
+        <n-text type="primary" class="text-MyColor-Main">
+          宾果游戏生成器 for 萌小志Mengxiaozhi
+        </n-text>
+      </n-h1>
+      <n-blockquote>
+        标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
+        虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
+        本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
+      </n-blockquote>
+      <br>
+      <div class="flex flex-wrap">
+        <div class="flex justify-start mb-3">
+          <div class="flex items-center mr-8">
+            <label for="rows" class="mr-2">行:</label>
+            <n-input-number id="rows" v-model:value="rows" size="large" min="2" />
+          </div>
+          <div class="flex items-center mr-8">
+            <label for="columns" class="mr-2">列:</label>
+            <n-input-number id="rows" v-model:value="columns" size="large" min="2" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <n-button @click="saveAsImage" ref="saveButton" type="primary" class="bg-MyColor-Main" size="large">
+            <n-icon size="23">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path
+                  d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z" />
+              </svg>
+            </n-icon>
+            生成图片
+          </n-button>
+          <n-button @click="exportAsCSV" ref="saveButton" type="primary" ghost class="text-MyColor-Main ml-3"
+            size="large">
+            <n-icon size="23">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 9l3 3l-3 3"></path>
+                  <path d="M13 15h3"></path>
+                  <rect x="4" y="4" width="16" height="16" rx="4"></rect>
+                </g>
+              </svg>
+            </n-icon>
+            导出CSV
+          </n-button>
+        </div>
       </div>
     </div>
-    <div class="mb-3">
-      <n-button @click="saveAsImage" ref="saveButton" type="primary" class="bg-MyColor-Main" size="large">
-        <n-icon size="23">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path
-              d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z" />
-          </svg>
-        </n-icon>
-        生成图片
-      </n-button>
-      <n-button @click="exportAsCSV" ref="saveButton" type="primary" ghost class="text-MyColor-Main ml-3" size="large">
-        <n-icon size="23">
-          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
-            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 9l3 3l-3 3"></path>
-              <path d="M13 15h3"></path>
-              <rect x="4" y="4" width="16" height="16" rx="4"></rect>
-            </g>
-          </svg>
-        </n-icon>
-        导出CSV
-      </n-button>
+    <div v-else>
+      <n-h1 class="mt-0">
+        <n-text type="primary" class="text-MyColor-Main">
+          宾果游戏生成器 for 萌小志Mengxiaozhi
+        </n-text>
+      </n-h1>
+      <n-blockquote>
+        标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
+        虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
+        本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
+      </n-blockquote>
+      <br>
+      <div class="flex flex-wrap">
+        <div class="flex justify-start mb-3">
+          <div class="flex items-center mr-8">
+            <label for="rows" class="mr-2">行:</label>
+            <n-input-number id="rows" v-model:value="rows" size="large" min="2" />
+          </div>
+          <div class="flex items-center mr-8">
+            <label for="columns" class="mr-2">列:</label>
+            <n-input-number id="rows" v-model:value="columns" size="large" min="2" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <n-button @click="saveAsImage" ref="saveButton" type="primary" class="bg-MyColor-Main" size="large">
+            <n-icon size="23">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path
+                  d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z" />
+              </svg>
+            </n-icon>
+            生成图片
+          </n-button>
+          <n-button @click="exportAsCSV" ref="saveButton" type="primary" ghost class="text-MyColor-Main ml-3"
+            size="large">
+            <n-icon size="23">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 9l3 3l-3 3"></path>
+                  <path d="M13 15h3"></path>
+                  <rect x="4" y="4" width="16" height="16" rx="4"></rect>
+                </g>
+              </svg>
+            </n-icon>
+            导出CSV
+          </n-button>
+        </div>
+      </div>
+    </div>
+    <div v-if="isWideScreen === true" class="px-8">
+      <n-divider vertical style="height:100%" class="py-6" />
+    </div>
+    <div v-else class="py-3">
+      <n-divider />
+    </div>
+    <div v-if="isWideScreen === true" style="width: 760px;">
+      <main ref="bingoTable" class="pt-6 pb-6">
+        <n-h1 prefix="bar">
+          <n-text type="primary">
+            <input class="text-MyColor-Main" maxlength="50" placeholder="輸入标题" style="font-size: 25px"></input>
+          </n-text>
+        </n-h1>
+        <n-p class="pl-3">
+          <textarea maxlength="85" placeholder="輸入说明" class="text-black" style="font-size: 17px" />
+        </n-p>
+        <n-table :bordered="true" :single-line="false" striped>
+          <tbody id="table">
+            <tr v-for="row in rows" :key="row">
+              <td v-for="col in columns" :key="col" style="padding: 0px;">
+                <!--<textarea maxlength="8" class="text-black text-center" />-->
+                <input maxlength="8" class="text-black text-center" type="text">
+              </td>
+            </tr>
+          </tbody>
+        </n-table>
+        <br>
+        <div>
+          <p>
+            宾果游戏生成器<br>Copyright© <a href="https://xiaozhi.moe" class="text-MyColor-Main">萌小志Mengxiaozhi</a>
+          </p>
+        </div>
+      </main>
+    </div>
+    <div v-else>
+      <main ref="bingoTable" class="pt-6 pb-6">
+        <n-h1 prefix="bar">
+          <n-text type="primary">
+            <input class="text-MyColor-Main" maxlength="50" placeholder="輸入标题" style="font-size: 25px"></input>
+          </n-text>
+        </n-h1>
+        <n-p class="pl-3">
+          <textarea maxlength="85" placeholder="輸入说明" class="text-black" style="font-size: 17px" />
+        </n-p>
+        <n-table :bordered="true" :single-line="false" striped>
+          <tbody id="table">
+            <tr v-for="row in rows" :key="row">
+              <td v-for="col in columns" :key="col" style="padding: 0px;">
+                <!--<textarea maxlength="8" class="text-black text-center" />-->
+                <input maxlength="8" class="text-black text-center" type="text">
+              </td>
+            </tr>
+          </tbody>
+        </n-table>
+        <br>
+        <div>
+          <p>
+            宾果游戏生成器<br>Copyright© <a href="https://xiaozhi.moe" class="text-MyColor-Main">萌小志Mengxiaozhi</a>
+          </p>
+        </div>
+      </main>
     </div>
   </div>
-  <n-divider />
-  <main ref="bingoTable" class="pt-6 pb-6">
-    <n-h1 prefix="bar">
-      <n-text type="primary">
-        <input class="text-MyColor-Main" maxlength="50" placeholder="輸入标题" style="font-size: 25px"></input>
-      </n-text>
-    </n-h1>
-    <n-p class="pl-3">
-      <textarea maxlength="85" placeholder="輸入说明" class="text-black" style="font-size: 17px" />
-    </n-p>
-    <n-table :bordered="true" :single-line="false" striped>
-      <tbody id="table">
-        <tr v-for="row in rows" :key="row">
-          <td v-for="col in columns" :key="col" style="padding: 0px;">
-            <!--<textarea maxlength="8" class="text-black text-center" />-->
-            <input maxlength="8" class="text-black text-center" type="text">
-          </td>
-        </tr>
-      </tbody>
-    </n-table>
-    <br>
-    <div>
-      <p>
-        宾果游戏生成器<br>Copyright© <a href="https://xiaozhi.moe" class="text-MyColor-Main">萌小志Mengxiaozhi</a>
-      </p>
-    </div>
-  </main>
 </template>
 
 <script>
-  import { nextTick, ref } from 'vue';
+  import { nextTick, ref, onMounted, onBeforeUnmount } from 'vue';
   import html2canvas from 'html2canvas';
-  import { NButton, NInputNumber, NIcon, NDivider, NTable, NImage, NText, NBlockquote } from 'naive-ui';
+  import { NButton, NInputNumber, NIcon, NDivider, NTable, NImage, NText, NBlockquote, NH1, NP } from 'naive-ui';
 
   export default {
     components: {
@@ -96,6 +185,8 @@
       NImage,
       NText,
       NBlockquote,
+      NH1,
+      NP
     },
     setup() {
       const gameName = ref('');
@@ -103,6 +194,34 @@
       const rows = ref(5);
       const columns = ref(5);
       const bingoTable = ref(null); // 定义 ref 对象
+      const scrollContainer = ref(null); //平滑滑动
+      const isWideScreen = ref(window.innerWidth > 1024); //判断屏幕大小,布林值
+
+      // 更新屏幕宽度状态
+      const updateScreenWidth = () => {
+        isWideScreen.value = window.innerWidth > 1024;
+      };
+
+      onMounted(() => {
+         //平滑滑动
+        if (scrollContainer.value) {
+          // 设置 Lenis 实例的容器
+          const lenis = this.$lenis;
+          lenis.setTarget(scrollContainer.value);
+        }
+        //屏幕大小
+        window.addEventListener('resize', updateScreenWidth);
+      });
+
+      onBeforeUnmount(() => {
+        // Lenis组件卸载时清理
+        if (scrollContainer.value) {
+          const lenis = this.$lenis;
+          lenis.removeTarget(scrollContainer.value);
+        }
+        //屏幕大小
+        window.removeEventListener('resize', updateScreenWidth);
+      });
 
       //导出图片功能
       const saveAsImage = async () => {
@@ -191,7 +310,7 @@
         }
       };
 
-      return { gameName, content, rows, columns, saveAsImage, exportAsCSV, bingoTable };
+      return { gameName, content, rows, columns, saveAsImage, exportAsCSV, bingoTable, scrollContainer, isWideScreen };
     }
   };
 </script>
@@ -232,7 +351,7 @@
     background-color: rgba(240, 248, 255, 0);
     border: 0;
     resize: none;
-    font-size: 25px;
+    font-size: 17px;
     outline-color: #5DAC81;
     height: 100%;
     width: 100%;
@@ -243,8 +362,7 @@
     width: 72px;
   }
 
-  @media (max-width: 768px) {
-
+  @media (max-width: 1024px) {
     /*#table textarea {
       font-size: 13px;
     }*/
