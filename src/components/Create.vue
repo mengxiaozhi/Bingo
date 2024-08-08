@@ -10,11 +10,11 @@
     <div v-if="isWideScreen === true" style="width: 570px;">
       <n-h1 class="mt-0">
         <n-text type="primary" class="text-MyColor-Main">
-          宾果游戏生成器 for 萌小志Mengxiaozhi
+          宾果游戏生成器 by萌小志Mengxiaozhi
         </n-text>
       </n-h1>
       <n-blockquote>
-        标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
+        标题最高支持25字元，说明最高支持45字元，每个栏位最高支持18个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2，双击表格栏位开始编辑。<br>
         虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
         本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
       </n-blockquote>
@@ -59,11 +59,11 @@
     <div v-else>
       <n-h1 class="mt-0">
         <n-text type="primary" class="text-MyColor-Main">
-          宾果游戏生成器 for 萌小志Mengxiaozhi
+          宾果游戏生成器 by萌小志Mengxiaozhi
         </n-text>
       </n-h1>
       <n-blockquote>
-        标题最高支持50字元，说明最高支持85字元，每个栏位最高支持8个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2。<br>
+        标题最高支持25字元，说明最高支持45字元，每个栏位最高支持18个字元，栏位无上限（如果你的电脑扛得住的话），下限为2*2，双击表格栏位开始编辑。<br>
         虽然本工具有兼容手机，但是你有在手机上用过Excel吗，所以还是建议用电脑使用，表格的UI/UX有什么方式可以优化还需思考。<br>
         本项目开源：<a href="https://github.com/mengxiaozhi/Bingo" class="text-MyColor-Main">GitHub</a>
       </n-blockquote>
@@ -115,18 +115,26 @@
       <main ref="bingoTable" class="pt-6 pb-6">
         <n-h1 prefix="bar">
           <n-text type="primary">
-            <input class="text-MyColor-Main" maxlength="50" placeholder="輸入标题" style="font-size: 25px"></input>
+            <input v-model="gameName" class="text-MyColor-Main" maxlength="25" placeholder="输入标题"
+              style="font-size: 25px" />
           </n-text>
         </n-h1>
         <n-p class="pl-3">
-          <textarea maxlength="85" placeholder="輸入说明" class="text-black" style="font-size: 17px" />
+          <textarea v-model="content" maxlength="45" placeholder="輸入说明" class="text-black"
+            style="font-size: 17px"></textarea>
         </n-p>
         <n-table :bordered="true" :single-line="false" striped>
           <tbody id="table">
-            <tr v-for="row in rows" :key="row">
-              <td v-for="col in columns" :key="col" style="padding: 0px;">
-                <!--<textarea maxlength="8" class="text-black text-center" />-->
-                <input maxlength="8" class="text-black text-center" type="text">
+            <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+              <td v-for="(col, colIndex) in columns" :key="colIndex" style="padding:0">
+                <template v-if="editMode[rowIndex][colIndex]">
+                  <textarea v-model="tableData[rowIndex][colIndex]" maxlength="18" class="text-black text-center"
+                    type="text" @blur="toggleEditMode(rowIndex, colIndex)" />
+                </template>
+                <template v-else>
+                  <p class="text-black text-center table_p" @click="toggleEditMode(rowIndex, colIndex)">{{
+                    tableData[rowIndex][colIndex] || '' }}</p>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -143,18 +151,26 @@
       <main ref="bingoTable" class="pt-6 pb-6">
         <n-h1 prefix="bar">
           <n-text type="primary">
-            <input class="text-MyColor-Main" maxlength="50" placeholder="輸入标题" style="font-size: 25px"></input>
+            <input v-model="gameName" class="text-MyColor-Main" maxlength="25" placeholder="输入标题"
+              style="font-size: 25px" />
           </n-text>
         </n-h1>
         <n-p class="pl-3">
-          <textarea maxlength="85" placeholder="輸入说明" class="text-black" style="font-size: 17px" />
+          <textarea v-model="content" maxlength="45" placeholder="輸入说明" class="text-black"
+            style="font-size: 17px"></textarea>
         </n-p>
         <n-table :bordered="true" :single-line="false" striped>
           <tbody id="table">
-            <tr v-for="row in rows" :key="row">
-              <td v-for="col in columns" :key="col" style="padding: 0px;">
-                <!--<textarea maxlength="8" class="text-black text-center" />-->
-                <input maxlength="8" class="text-black text-center" type="text">
+            <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+              <td v-for="(col, colIndex) in columns" :key="colIndex" style="padding:0">
+                <template v-if="editMode[rowIndex][colIndex]">
+                  <textarea v-model="tableData[rowIndex][colIndex]" maxlength="18" class="text-black text-center"
+                    type="text" @blur="toggleEditMode(rowIndex, colIndex)" />
+                </template>
+                <template v-else>
+                  <p class="text-black text-center table_p" @click="toggleEditMode(rowIndex, colIndex)">{{
+                    tableData[rowIndex][colIndex] || '' }}</p>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -171,7 +187,7 @@
 </template>
 
 <script>
-  import { nextTick, ref, onMounted, onBeforeUnmount } from 'vue';
+  import { nextTick, ref, onMounted, onBeforeUnmount, watch } from 'vue';
   import html2canvas from 'html2canvas';
   import { NButton, NInputNumber, NIcon, NDivider, NTable, NImage, NText, NBlockquote, NH1, NP } from 'naive-ui';
 
@@ -196,14 +212,27 @@
       const bingoTable = ref(null); // 定义 ref 对象
       const scrollContainer = ref(null); //平滑滑动
       const isWideScreen = ref(window.innerWidth > 1024); //判断屏幕大小,布林值
+      const tableData = ref(Array.from({ length: rows.value }, () => Array(columns.value).fill('')));// 表格数据
+      const editMode = ref(Array.from({ length: rows.value }, () => Array(columns.value).fill(false)));// 编辑模式状态
+
+      // 监听 rows 和 columns 变化
+      watch([rows, columns], ([newRows, newColumns]) => {
+        tableData.value = Array.from({ length: newRows }, () => Array(newColumns).fill(''));
+        editMode.value = Array.from({ length: newRows }, () => Array(newColumns).fill(false));
+      });
 
       // 更新屏幕宽度状态
       const updateScreenWidth = () => {
         isWideScreen.value = window.innerWidth > 1024;
       };
 
+      // 切换编辑模式
+      const toggleEditMode = (rowIndex, colIndex) => {
+        editMode.value[rowIndex][colIndex] = !editMode.value[rowIndex][colIndex];
+      };
+
       onMounted(() => {
-         //平滑滑动
+        //平滑滑动
         if (scrollContainer.value) {
           // 设置 Lenis 实例的容器
           const lenis = this.$lenis;
@@ -246,11 +275,10 @@
           // 设置固定字体大小
           const style = document.createElement('style');
           style.textContent = `
-            #table input {
-              font-size: 17px !important;
-              height: 50% !important;
-            }
-          `;
+        #table p {
+          font-size: 23px !important;
+        }
+      `;
           clonedTable.appendChild(style);
 
           // 获取元素尺寸
@@ -289,7 +317,7 @@
 
           table.querySelectorAll('tr').forEach(row => {
             const rowData = Array.from(row.querySelectorAll('td')).map(cell =>
-              `"${cell.querySelector('textarea').value.replace(/"/g, '""')}"`
+              `"${cell.querySelector('p').textContent.replace(/"/g, '""')}"`
             ).join(',');
             csvContent += rowData + '\r\n';
           });
@@ -310,13 +338,74 @@
         }
       };
 
-      return { gameName, content, rows, columns, saveAsImage, exportAsCSV, bingoTable, scrollContainer, isWideScreen };
+      return { gameName, content, rows, columns, saveAsImage, exportAsCSV, bingoTable, scrollContainer, isWideScreen, tableData, editMode, toggleEditMode };
     }
   };
 </script>
 
 <style scoped>
-  input {
+  /*input {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  outline-color: #5DAC81;
+}
+
+textarea {
+  background-color: rgba(240, 248, 255, 0);
+  border: 0;
+  resize: none;
+  outline-color: #5DAC81;
+  height: 100%;
+  width: 100%;
+}
+
+#table textarea {
+  background-color: rgba(240, 248, 255, 0);
+  border: 0;
+  resize: none;
+  font-size: 1em;
+  outline-color: #5DAC81;
+  height: 50%;
+  width: 100%;
+}
+
+#table textarea:focus {
+  height: 100%;
+  width: 100%;
+}
+
+#table input {
+  background-color: rgba(240, 248, 255, 0);
+  border: 0;
+  resize: none;
+  font-size: 17px;
+  outline-color: #5DAC81;
+  height: 100%;
+  width: 100%;
+}
+
+td {
+  height: 72px;
+  width: 72px;
+}
+
+@media (max-width: 1024px) {
+  #table textarea {
+    font-size: 13px;
+  }
+  #table input {
+    font-size: 13px;
+  }
+}
+
+.n-table.n-table--bordered {
+  border: 1.7px solid #000;
+  border-radius: 3px;
+}*/
+
+  input,
+  textarea {
     height: 100%;
     width: 100%;
     border: 0;
@@ -325,49 +414,34 @@
 
   textarea {
     background-color: rgba(240, 248, 255, 0);
-    border: 0;
     resize: none;
-    outline-color: #5DAC81;
-    height: 100%;
-    width: 100%;
   }
 
-  /* #table textarea {
-    background-color: rgba(240, 248, 255, 0);
-    border: 0;
-    resize: none;
-    font-size: 1em;
-    outline-color: #5DAC81;
-    height: 50%;
-    width: 100%;
+  #table textarea {
+    font-size: 23px;
   }
 
-  #table textarea:focus {
+  .table_p {
+    margin: 0;
+    padding: 0;
     height: 100%;
     width: 100%;
-  }*/
-
-  #table input {
-    background-color: rgba(240, 248, 255, 0);
-    border: 0;
-    resize: none;
-    font-size: 17px;
-    outline-color: #5DAC81;
-    height: 100%;
-    width: 100%;
+    font-size: 23px;
+    text-align: center;
   }
 
   td {
-    height: 72px;
-    width: 72px;
+    height: 147.41px;
+    width: 147.41px;
   }
 
   @media (max-width: 1024px) {
-    /*#table textarea {
-      font-size: 13px;
-    }*/
-    #table input {
-      font-size: 13px;
+    #table textarea {
+      font-size: 17px;
+    }
+
+    .table_p {
+      font-size: 17px;
     }
   }
 
